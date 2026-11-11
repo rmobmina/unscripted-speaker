@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[un]scripted dashboard</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">[un]scripted <span class="muted">2.0 · research prototype</span></div>
+  <div id="whoami" class="muted"></div>
+</header>
+
+<div id="banners"></div>
+
+<main>
+  <section id="login" class="card narrow">
+    <h2>Sign in</h2>
+    <p class="muted">Enter the caregiver or researcher access code from <code>backend/.env</code>.</p>
+    <form id="loginForm">
+      <input id="tokenInput" type="password" autocomplete="current-password" placeholder="Access code" required>
+      <button type="submit">Sign in</button>
+    </form>
+    <p id="loginErr" class="err"></p>
+  </section>
+
+  <div id="app" hidden>
+    <nav class="tabs" role="tablist">
+      <button data-tab="device" class="active">Device</button>
+      <button data-tab="caregiver">Personal context</button>
+      <button data-tab="research" data-role="researcher">Research</button>
+      <button data-tab="data" data-role="researcher">Data &amp; metrics</button>
+      <button id="logout" class="link">Sign out</button>
+    </nav>
+
+    <!-- DEVICE -->
+    <section data-panel="device">
+      <div class="card">
+        <h2>Device status</h2>
+        <div id="devices"></div>
+      </div>
+      <div class="card">
+        <h2>Comfort &amp; accessibility</h2>
+        <p class="muted">These settings apply to the device within about a second.</p>
+        <div class="grid2">
+          <label>Volume <output id="volOut"></output><input type="range" id="volume" min="0" max="100" step="5"></label>
+          <label>Max brightness <output id="brOut"></output><input type="range" id="max_brightness_pct" min="0" max="60" step="5"></label>
+          <label class="check"><input type="checkbox" id="reduced_motion"> Reduced motion (steady lights)</label>
+          <label class="check"><input type="checkbox" id="lights_off"> Lights off</label>
+        </div>
+        <p id="comfortMsg" class="muted"></p>
+      </div>
+      <div class="card">
+        <h2>Conversation</h2>
+        <p class="muted">Start a fresh conversation, for example before a new person uses the device. The device forgets the last few exchanges.</p>
+        <button id="resetSession">Start new conversation</button>
+        <span id="resetMsg" class="muted"></span>
+      </div>
+      <div class="card">
+        <h2>Safety notices</h2>
+        <p>This device is an experimental companion. It is <strong>not</strong> an emergency or alerting system.
+        If the person says something worrying, the device tells them to press their help button or call out for
+        someone, and the event is logged for the research team. <strong>No message is sent to anyone.</strong></p>
+      </div>
+    </section>
+
+    <!-- CAREGIVER CONTEXT -->
+    <section data-panel="caregiver" hidden>
+      <div class="card">
+        <h2>About the person</h2>
+        <p class="muted">Only items marked <em>Approved</em> are ever used by the companion. You can edit or delete anything at any time.</p>
+        <div class="grid2">
+          <label>Preferred name<input id="preferred_name" maxlength="60"></label>
+          <label>Communication preferences<input id="communication_style" maxlength="300" placeholder="e.g. speak slowly; enjoys gentle humour"></label>
+        </div>
+        <button id="saveProfile">Save</button> <span id="profileMsg" class="muted"></span>
+      </div>
+      <div class="card">
+        <h2>Important people</h2>
+        <table class="list" id="peopleTable"></table>
+        <form id="personForm" class="row">
+          <input name="name" placeholder="Name" maxlength="60" required>
+          <input name="relationship" placeholder="Relationship (e.g. daughter)" maxlength="60" required>
+          <select name="status">
+            <option value="living">Living</option>
+            <option value="deceased_verified">Has died (verified)</option>
+            <option value="unknown" selected>Not specified</option>
+          </select>
+          <input name="notes" placeholder="Notes (optional)" maxlength="200">
+          <label class="check"><input type="checkbox" name="approved"> Approved</label>
+          <button type="submit">Add</button>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Daily routines</h2>
+        <table class="list" id="routinesTable"></table>
+        <form id="routineForm" class="row">
+          <input name="time_label" placeholder="When (e.g. mornings)" maxlength="40">
+          <input name="description" placeholder="Routine" maxlength="200" required>
+          <label class="check"><input type="checkbox" name="approved"> Approved</label>
+          <button type="submit">Add</button>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Comforting activities</h2>
+        <table class="list" id="activitiesTable"></table>
+        <form id="activityForm" class="row">
+          <input name="description" placeholder="Activity (e.g. listening to Frank Sinatra)" maxlength="200" required>
+          <label class="check"><input type="checkbox" name="approved"> Approved</label>
+          <button type="submit">Add</button>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Familiar voice messages</h2>
+        <p class="muted">Record a short message (up to 60 s) from someone the person knows. Only record with that person's permission.
+          The companion may offer it; it never plays it without asking.</p>
+        <table class="list" id="voiceTable"></table>
+        <div class="row">
+          <input id="vmLabel" placeholder="Label (e.g. Message from Anna)" maxlength="60">
+          <input id="vmDesc" placeholder="What it's about (optional)" maxlength="120">
+          <label class="check"><input type="checkbox" id="vmApproved"> Approved</label>
+        </div>
+        <div class="row">
+          <button id="recBtn">● Record</button>
+          <span id="recState" class="muted"></span>
+          <span class="muted">or</span>
+          <input type="file" id="vmFile" accept="audio/wav,.wav">
+          <button id="vmUpload">Upload</button>
+        </div>
+        <p id="vmMsg" class="muted"></p>
+      </div>
+      <div class="card">
+        <h2>What the companion is told</h2>
+        <pre id="promptPreview" class="pre"></pre>
+      </div>
+      <div class="card danger">
+        <h2>Delete all personal information</h2>
+        <p>Removes every person, routine, activity, preference and voice recording. This cannot be undone.</p>
+        <button id="deleteAll" class="danger">Delete everything</button>
+      </div>
+    </section>
+
+    <!-- RESEARCH -->
+    <section data-panel="research" hidden>
+      <div class="card">
+        <h2>Light condition</h2>
+        <div class="seg" id="condSeg">
+          <button data-c="B1">B1 · steady</button><button data-c="B2">B2 · animated</button><button data-c="B3">B3 · animated + topic</button>
+        </div>
+        <p id="condMsg" class="muted"></p>
+      </div>
+      <div class="card">
+        <h2>Participant session</h2>
+        <div class="grid2">
+          <label>Participant code<input id="participant_code" maxlength="12" placeholder="P01"></label>
+          <label>Session number<input id="session_number" type="number" min="1" max="99"></label>
+        </div>
+        <label class="check"><input type="checkbox" id="retain_transcripts"> Keep transcripts (opt-in consent only)</label>
+        <label class="check"><input type="checkbox" id="retain_audio"> Keep audio recordings (opt-in consent only)</label>
+        <label class="check"><input type="checkbox" id="consent_recorded"> I confirm opt-in consent for retention has been recorded</label>
+        <label class="check"><input type="checkbox" id="loopback_test"> Audio loopback test (device plays back what it heard; no AI)</label>
+        <button id="saveResearch">Save</button> <span id="researchMsg" class="muted"></span>
+      </div>
+      <div class="card">
+        <h2>Status probes (lights only)</h2>
+        <p class="muted">Shows one status light for a few seconds while the device is idle, for the status-recognition task.</p>
+        <div class="row" id="probeRow">
+          <button data-p="IDLE">Idle</button><button data-p="LISTENING">Listening</button><button data-p="PROCESSING">Thinking</button>
+          <button data-p="SPEAKING">Speaking</button><button data-p="ERROR">Error</button><button data-p="OFFLINE">Offline</button>
+          <label>Duration (s) <input id="probeDur" type="number" min="1" max="30" value="8" style="width:4em"></label>
+        </div>
+      </div>
+      <div class="card">
+        <h2>LED calibration</h2>
+        <p class="muted"><strong>logical_zero</strong> lights only the LED the firmware thinks is the top. <strong>rgb</strong> shows red, green, blue on LEDs 0, 1, 2 to check colour order.</p>
+        <div class="row">
+          <button data-d="logical_zero">Show top LED</button><button data-d="rgb">Colour order test</button><button data-d="all_white_low">All dim white</button>
+        </div>
+        <div class="grid2">
+          <label>Top LED offset<input id="led_offset" type="number" min="0" max="63"></label>
+          <label class="check"><input type="checkbox" id="led_reverse"> Reverse direction</label>
+          <label class="check"><input type="checkbox" id="led_grb"> Swap red/green (GRB)</label>
+          <label>Topic afterglow (ms)<input id="afterglow_ms" type="number" min="0" max="60000" step="1000"></label>
+          <label>Silence endpoint (ms)<input id="silence_endpoint_ms" type="number" min="500" max="5000" step="100"></label>
+          <label>VAD absolute (dBFS)<input id="vad_abs_dbfs" type="number" min="-90" max="-10" step="1"></label>
+          <label>VAD SNR (dB)<input id="vad_snr_db" type="number" min="0" max="40" step="1"></label>
+        </div>
+        <button id="saveCal">Save calibration</button> <span id="calMsg" class="muted"></span>
+      </div>
+      <div class="card">
+        <h2>Text test of the companion <span class="tag">SOFTWARE_SIMULATOR</span></h2>
+        <p class="muted">Sends text straight to the language model and safety layer (no audio, no device). Not a participant session.</p>
+        <form id="textForm" class="row">
+          <input id="textIn" placeholder="e.g. Where is my husband?" maxlength="500" required style="flex:1">
+          <button type="submit">Send</button>
+          <button type="button" id="textClear" class="link">Clear</button>
+        </form>
+        <div id="textLog"></div>
+      </div>
+    </section>
+
+    <!-- DATA -->
+    <section data-panel="data" hidden>
+      <div class="card">
+        <h2>Benchmarks</h2>
+        <p class="muted">Grouped by run mode and AI mode; simulated and real-hardware results are never pooled. Median / p95 / n.</p>
+        <div id="metrics"></div>
+        <button id="refreshMetrics">Refresh</button>
+      </div>
+      <div class="card">
+        <h2>Export</h2>
+        <p class="muted">Anonymised event log: timings and categories only; no audio, no words, no access codes.</p>
+        <button id="expCsv">Download CSV</button> <button id="expJson">Download JSON</button>
+      </div>
+      <div class="card">
+        <h2>Recent events</h2>
+        <div class="scroll"><table class="list small" id="eventsTable"></table></div>
+      </div>
+      <div class="card danger">
+        <h2>Delete research data</h2>
+        <button id="deleteEvents" class="danger">Delete all events and transcripts</button>
+      </div>
+    </section>
+  </div>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>

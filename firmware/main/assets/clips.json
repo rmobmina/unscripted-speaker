@@ -1,0 +1,36 @@
+{
+  "engine": "say",
+  "format": "pcm_s16le 16000 Hz mono",
+  "clips": {
+    "clip_not_understood": {
+      "text": "I'm sorry, I didn't catch that. Could you press the button and say it again?",
+      "seconds": 4.27,
+      "voice": "Samantha",
+      "rate_wpm": 165
+    },
+    "clip_no_speech": {
+      "text": "I didn't hear anything. You can press the button and talk whenever you're ready.",
+      "seconds": 3.85,
+      "voice": "Samantha",
+      "rate_wpm": 165
+    },
+    "clip_error": {
+      "text": "Sorry, something went wrong on my end. Let's try again in a moment.",
+      "seconds": 3.93,
+      "voice": "Samantha",
+      "rate_wpm": 165
+    },
+    "clip_timeout": {
+      "text": "Sorry, that took too long on my end. Let's try again in a moment.",
+      "seconds": 3.87,
+      "voice": "Samantha",
+      "rate_wpm": 165
+    },
+    "clip_offline": {
+      "text": "I can't connect right now.",
+      "seconds": 1.48,
+      "voice": "Samantha",
+      "rate_wpm": 165
+    }
+  }
+}

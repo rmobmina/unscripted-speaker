@@ -1,0 +1,66 @@
+/* Palette reused from the MemoryCare (Iteration Zero) Flutter app: app/lib/theme/app_colors.dart */
+:root {
+  --bg: rgb(250, 249, 243);
+  --card: #ffffff;
+  --primary: #7E99B4;
+  --rose: #CE9482;
+  --sage: #B0C29D;
+  --teal: #8FB0A3;
+  --text: #3F4A3C;
+  --text-med: #6B7566;
+  --border: #DAD4C1;
+  --warn-bg: #fbf0e6;
+  --danger: #b5523b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1f2420; --card: #2a302b; --text: #e8ebe4; --text-med: #b3bbad; --border: #444c43; --warn-bg: #3a2f26;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.top { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.brand { font-weight: 700; font-size: 1.15rem; }
+.muted { color: var(--text-med); font-weight: 400; font-size: .92rem; }
+main { max-width: 1040px; margin: 0 auto; padding: 16px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 16px; }
+.card.narrow { max-width: 420px; margin: 40px auto; }
+.card.danger { border-color: var(--rose); }
+h2 { font-size: 1.1rem; margin: 0 0 8px; }
+input, select, button { font: inherit; color: inherit; }
+input:not([type=checkbox]):not([type=range]):not([type=file]), select {
+  padding: 7px 9px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); min-width: 0; }
+button { padding: 7px 14px; border-radius: 8px; border: 1px solid var(--primary); background: var(--primary); color: #fff; cursor: pointer; }
+button:hover { filter: brightness(1.05); }
+button.link { background: none; border: none; color: var(--primary); padding: 7px 6px; }
+button.danger { background: var(--danger); border-color: var(--danger); }
+button:disabled { opacity: .5; cursor: default; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.tabs button { background: transparent; color: var(--text); border-color: var(--border); }
+.tabs button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.tabs #logout { margin-left: auto; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 16px; margin: 8px 0 12px; }
+label { display: flex; flex-direction: column; gap: 4px; font-size: .92rem; }
+label.check { flex-direction: row; align-items: center; gap: 8px; margin: 4px 0; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+.row input { flex: 1 1 140px; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button { background: transparent; color: var(--text); border-color: var(--border); }
+.seg button.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+table.list { width: 100%; border-collapse: collapse; margin: 6px 0; }
+table.list td, table.list th { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; font-size: .92rem; }
+table.small td, table.small th { font-size: .8rem; padding: 3px 6px; white-space: nowrap; }
+.scroll { max-height: 420px; overflow: auto; }
+.pre { white-space: pre-wrap; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-size: .85rem; max-height: 300px; overflow: auto; }
+.err { color: var(--danger); }
+.ok { color: #4f7a45; }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 99px; font-size: .78rem; border: 1px solid var(--border); }
+.pill.on { background: var(--sage); border-color: var(--sage); color: #233; }
+.pill.off { background: var(--rose); border-color: var(--rose); color: #fff; }
+.tag { font-size: .7rem; padding: 1px 6px; border-radius: 4px; background: var(--rose); color: #fff; vertical-align: middle; }
+.banner { margin: 0 16px 0; padding: 10px 14px; border-radius: 8px; background: var(--warn-bg); border: 1px solid var(--rose); margin-top: 10px; }
+.bubble { margin: 6px 0; padding: 8px 10px; border-radius: 8px; background: var(--bg); border: 1px solid var(--border); }
+.bubble .meta { font-size: .78rem; color: var(--text-med); }
+.dev { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 6px 16px; }
+.dev div b { display: block; font-size: .78rem; color: var(--text-med); font-weight: 500; }
+@media (max-width: 600px) { .tabs #logout { margin-left: 0; } }
